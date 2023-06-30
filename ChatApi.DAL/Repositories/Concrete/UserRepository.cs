@@ -1,5 +1,6 @@
 ﻿using ChatApi.BLL.Entities;
 using ChatApi.BLL.Repositories;
+using ChatApi.DAL.DataContexts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,25 +11,27 @@ namespace ChatApi.DAL.Repositories.Concrete
 {
     public class UserRepository : IUserRepository
     {
-        private readonly Dictionary<string, User> _users = new Dictionary<string, User>();
+        private readonly AppDataContext _efDbContext;
+
+        public UserRepository(AppDataContext efDbContext)
+        {
+            _efDbContext = efDbContext;
+        }
 
         public void Add(User user)
         {
-            if (user.UserId == null)
+            if (string.IsNullOrEmpty(user.UserId))
             {
-                throw new ArgumentException(message: $"user.{nameof(user.UserId)} cannot be null");
+                throw new ArgumentException(message: $"user.{nameof(user.UserId)} cannot be null or empty");
             }
-            if (_users.ContainsKey(user.UserId))
-            {
-                throw new ArgumentException(message: "user already exist");
-            }
-            _users[user.UserId] = user;
+            _efDbContext.Users.Add(user);
+            _efDbContext.SaveChanges();
         }
 
         public User? FindByName(string username)
         {
-            return _users.Values
-                .SingleOrDefault(u => string.Equals(u.UserName, username, comparisonType: StringComparison.OrdinalIgnoreCase));
+            return _efDbContext.Users
+                .SingleOrDefault(u => username.Equals(u.UserName, StringComparison.OrdinalIgnoreCase));
         }
     }
 }

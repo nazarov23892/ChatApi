@@ -4,6 +4,8 @@ using ChatApi.BLL.Services.Users;
 using ChatApi.DAL.Repositories.Concrete;
 using ChatApi.BLL.Services.Users.DTOs;
 using Microsoft.AspNetCore.Mvc;
+using ChatApi.DAL.DataContexts;
+using Microsoft.EntityFrameworkCore;
 
 namespace ChatApi.WEB
 {
@@ -12,7 +14,11 @@ namespace ChatApi.WEB
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            builder.Services.AddSingleton<IUserRepository, UserRepository>();
+            builder.Services.AddDbContext<AppDataContext>(o =>
+            {
+                o.UseInMemoryDatabase(databaseName: "chat-db");
+            });
+            builder.Services.AddTransient<IUserRepository, UserRepository>();
             builder.Services.AddTransient<IUserService, UserService>();
 
             var app = builder.Build();
