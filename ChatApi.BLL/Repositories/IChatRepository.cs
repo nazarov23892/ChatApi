@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ChatApi.BLL.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,7 @@ namespace ChatApi.BLL.Repositories
 {
     public interface IChatRepository
     {
-        void Add(Entities.Chat chat);
+        void Add(Chat chat);
+        Chat? FindByName(string name);
     }
 }

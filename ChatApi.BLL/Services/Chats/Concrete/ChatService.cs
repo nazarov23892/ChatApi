@@ -43,7 +43,15 @@ namespace ChatApi.BLL.Services.Chats.Concrete
             if (!ValidateObject(createRequestDto))
             {
                 return null;
-            };
+            }
+            var existChat = _chatRepository.FindByName(createRequestDto.Name);
+            if (existChat != null)
+            {
+                AddValidationError(
+                    errorMessage: "chat with the same name already exists",
+                    memberName: nameof(createRequestDto.Name));
+                return null;
+            }
             Entities.Chat chat = new Entities.Chat
             {
                 ChatId = Guid.NewGuid().ToString(),
@@ -74,6 +82,16 @@ namespace ChatApi.BLL.Services.Chats.Concrete
                 _validationProblems.AddRange(results);
             }
             return res;
+        }
+
+        private void AddValidationError(string errorMessage, string? memberName = null)
+        {
+            _validationProblems.Add(
+                new ValidationResult(
+                    errorMessage: errorMessage,
+                    memberNames: !string.IsNullOrEmpty(memberName)
+                        ? new[] { memberName }
+                        : null));
         }
     }
 }

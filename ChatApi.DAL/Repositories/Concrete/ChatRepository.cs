@@ -27,5 +27,11 @@ namespace ChatApi.DAL.Repositories.Concrete
             _efDbContext.Chats.Add(chat);
             _efDbContext.SaveChanges();
         }
+
+        public Chat? FindByName(string name)
+        {
+            return _efDbContext.Chats
+                .SingleOrDefault(c => name.Equals(c.Name, StringComparison.OrdinalIgnoreCase));
+        }
     }
 }
