@@ -1,4 +1,5 @@
 ﻿using ChatApi.BLL.Basic;
+using ChatApi.BLL.Entities;
 using ChatApi.BLL.Repositories;
 using ChatApi.BLL.Services.Chats.DTOs;
 using System;
@@ -13,10 +14,14 @@ namespace ChatApi.BLL.Services.Chats.Concrete
     public class ChatService : BaseValidation, IChatService
     {
         private readonly IChatRepository _chatRepository;
+        private readonly IUserRepository _userRepository;
 
-        public ChatService(IChatRepository chatRepository)
+        public ChatService(
+            IChatRepository chatRepository,
+            IUserRepository userRepository)
         {
             _chatRepository = chatRepository;
+            _userRepository = userRepository;
         }
 
         public CreateChatResponseDto? Create(CreateChatRequestDto createRequestDto)
@@ -33,12 +38,27 @@ namespace ChatApi.BLL.Services.Chats.Concrete
                     memberName: nameof(createRequestDto.Name));
                 return null;
             }
-            Entities.Chat chat = new Entities.Chat
+            Chat chat = new Chat
             {
                 ChatId = Guid.NewGuid().ToString(),
                 CreatedAt = DateTime.UtcNow,
                 Name = createRequestDto.Name
             };
+            // todo: to check user ids
+            var users = _userRepository.GetByIds(createRequestDto.Users)
+                .ToDictionary(keySelector: u => u.UserId);
+            foreach (var userId in createRequestDto.Users)
+            {
+                if (!users.ContainsKey(userId))
+                {
+                    AddValidationError(
+                        errorMessage: $"user not found: id='{userId}'",
+                        memberName: nameof(createRequestDto.Users));
+                    return null;
+                }
+                User user = users[userId];
+                chat.Users.Add(user);
+            }
             _chatRepository.Add(chat);
             return new CreateChatResponseDto
             {

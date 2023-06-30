@@ -11,5 +11,6 @@ namespace ChatApi.BLL.Repositories
     {
         void Add(User user);
         User? FindByName(string username);
+        IEnumerable<User> GetByIds(IEnumerable<string> userIds);
     }
 }
