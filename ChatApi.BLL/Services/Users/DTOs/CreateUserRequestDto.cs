@@ -10,6 +10,7 @@ namespace ChatApi.BLL.Services.Users.DTOs
     public class CreateUserRequestDto
     {
         [Required]
+        [StringLength(maximumLength: 20, MinimumLength = 3)]
         public string UserName { get; set; } = string.Empty;
     }
 }

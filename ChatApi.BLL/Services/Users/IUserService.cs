@@ -10,5 +10,8 @@ namespace ChatApi.BLL.Services.Users
     public interface IUserService
     {
         CreateUserResponseDto? CreateUser(CreateUserRequestDto createUserDto);
+        bool HasValidationProblems { get; }
+        Dictionary<string, string[]> ValidationProblems { get; }
+
     }
 }

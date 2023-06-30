@@ -25,12 +25,16 @@ namespace ChatApi.WEB
                 {
                     if (createUserRequestDto == null)
                     {
-                        return Results.BadRequest();
+                        return Results.ValidationProblem(
+                            errors: new Dictionary<string, string[]>
+                            {
+                                ["empty or ivalid request param value"] = Array.Empty<string>()
+                            });
                     }
                     var response = userService.CreateUser(createUserRequestDto);
-                    if (response == null)
+                    if (userService.HasValidationProblems)
                     {
-                        return Results.BadRequest();
+                        return Results.ValidationProblem(userService.ValidationProblems);
                     }
                     return Results.Ok(value: response);
                 });
