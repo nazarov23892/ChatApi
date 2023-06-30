@@ -147,5 +147,45 @@ namespace ChatApi.Tests
                     times: Times.Never);
             }
         }
+
+        [Fact]
+        public void Cannot_Create_Chat_When_Chatname_Is_Exist()
+        {
+            // arrange
+
+            Mock<IChatRepository> mock = new Mock<IChatRepository>();
+            mock.Setup(expression: m => m.FindByName(It.IsAny<string>()))
+                .Returns<string>(
+                    valueFunction: s =>
+                        s.Equals("chat1", comparisonType: StringComparison.OrdinalIgnoreCase)
+                        ? new Chat
+                        {
+                            ChatId = "001",
+                            Name = "chat1"
+                        }
+                        : null);
+
+            ChatService target = new ChatService(mock.Object);
+
+            // act
+
+            CreateChatResponseDto? result = target.Create(new CreateChatRequestDto
+            {
+                Name = "chat1",
+                Users = new[] { "aaa", "bbb" }
+            });
+
+            // assert
+
+            Assert.Null(result);
+            Assert.True(target.HasValidationProblems);
+            Assert.Single(target.ValidationProblems);
+            Assert.Contains(
+                expectedSubstring: "the same name already exists",
+                actualString: target.ValidationProblems.Keys.Single());
+            mock.Verify(
+                expression: m => m.Add(It.IsAny<Chat>()),
+                times: Times.Never);
+        }
     }
 }
