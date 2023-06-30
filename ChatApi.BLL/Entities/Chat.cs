@@ -14,7 +14,7 @@ namespace ChatApi.BLL.Entities
         public string ChatId { get; set; } = string.Empty;
 
         [Required]
-        public string? Name { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
         public ICollection<User> Users { get; set; } = new List<User>();
     }
