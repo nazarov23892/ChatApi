@@ -19,6 +19,7 @@ namespace ChatApi.BLL.Services.Users.Concrete
         {
             _userRepository = userRepository;
         }
+
         public bool HasValidationProblems
         {
             get => _validationProblems.Any();
@@ -42,6 +43,14 @@ namespace ChatApi.BLL.Services.Users.Concrete
         {
             if (!ValidateObject(createUserDto))
             {
+                return null;
+            }
+            User? existUser = _userRepository.FindByName(createUserDto.UserName);
+            if (existUser != null)
+            {
+                AddValidationError(
+                    errorMessage: "user with the same name already exists",
+                    memberName: nameof(createUserDto.UserName));
                 return null;
             }
             User user = new User
@@ -71,6 +80,16 @@ namespace ChatApi.BLL.Services.Users.Concrete
                 _validationProblems.AddRange(results);
             }
             return res;
+        }
+
+        private void AddValidationError(string errorMessage, string? memberName = null)
+        {
+            _validationProblems.Add(
+                new ValidationResult(
+                    errorMessage: errorMessage,
+                    memberNames: !string.IsNullOrEmpty(memberName)
+                        ? new[] { memberName }
+                        : null));
         }
     }
 }

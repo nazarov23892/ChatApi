@@ -12,7 +12,7 @@ namespace ChatApi.WEB
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            builder.Services.AddTransient<IUserRepository, UserRepository>();
+            builder.Services.AddSingleton<IUserRepository, UserRepository>();
             builder.Services.AddTransient<IUserService, UserService>();
 
             var app = builder.Build();

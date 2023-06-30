@@ -10,5 +10,6 @@ namespace ChatApi.BLL.Repositories
     public interface IUserRepository
     {
         void Add(User user);
+        User? FindByName(string username);
     }
 }

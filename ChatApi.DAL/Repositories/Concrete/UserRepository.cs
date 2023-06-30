@@ -24,5 +24,11 @@ namespace ChatApi.DAL.Repositories.Concrete
             }
             _users[user.UserId] = user;
         }
+
+        public User? FindByName(string username)
+        {
+            return _users.Values
+                .SingleOrDefault(u => string.Equals(u.UserName, username, comparisonType: StringComparison.OrdinalIgnoreCase));
+        }
     }
 }
