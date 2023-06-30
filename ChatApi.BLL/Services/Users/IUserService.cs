@@ -1,4 +1,5 @@
-﻿using ChatApi.BLL.Services.Users.DTOs;
+﻿using ChatApi.BLL.Basic;
+using ChatApi.BLL.Services.Users.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,11 +8,8 @@ using System.Threading.Tasks;
 
 namespace ChatApi.BLL.Services.Users
 {
-    public interface IUserService
+    public interface IUserService: IValidatableService
     {
         CreateUserResponseDto? CreateUser(CreateUserRequestDto createUserDto);
-        bool HasValidationProblems { get; }
-        Dictionary<string, string[]> ValidationProblems { get; }
-
     }
 }
