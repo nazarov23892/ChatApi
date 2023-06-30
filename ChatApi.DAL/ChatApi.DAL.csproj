@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ChatApi.BLL\ChatApi.BLL.csproj" />
+  </ItemGroup>
+
 </Project>
