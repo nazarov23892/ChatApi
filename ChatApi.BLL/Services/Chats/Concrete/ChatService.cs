@@ -44,10 +44,20 @@ namespace ChatApi.BLL.Services.Chats.Concrete
                 CreatedAt = DateTime.UtcNow,
                 Name = createRequestDto.Name
             };
-            // todo: to check user ids
-            var users = _userRepository.GetByIds(createRequestDto.Users)
+            var userIds = createRequestDto.Users;
+            if(userIds.Any(s => string.IsNullOrEmpty(s)))
+            {
+                AddValidationError(errorMessage: "users contain empty value");
+                return null;
+            }
+            if (userIds.Distinct().Count() != userIds.Count())
+            {
+                AddValidationError(errorMessage: "users contain duplicates");
+                return null;
+            }
+            var users = _userRepository.GetByIds(userIds)
                 .ToDictionary(keySelector: u => u.UserId);
-            foreach (var userId in createRequestDto.Users)
+            foreach (var userId in userIds)
             {
                 if (!users.ContainsKey(userId))
                 {
