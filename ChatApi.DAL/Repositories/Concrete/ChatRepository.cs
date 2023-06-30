@@ -33,5 +33,14 @@ namespace ChatApi.DAL.Repositories.Concrete
             return _efDbContext.Chats
                 .SingleOrDefault(c => name.Equals(c.Name, StringComparison.OrdinalIgnoreCase));
         }
+
+        public IEnumerable<Chat> FindByUser(string userId)
+        {
+            return _efDbContext.Chats
+                .Where(c => c.Users
+                        .Where(u => u.UserId.Equals(userId))
+                        .Any())
+                .ToArray();
+        }
     }
 }

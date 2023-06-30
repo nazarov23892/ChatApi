@@ -11,5 +11,6 @@ namespace ChatApi.BLL.Services.Chats
     public interface IChatService: IValidatableService
     {
         CreateChatResponseDto? Create(CreateChatRequestDto createRequestDto);
+        ChatsOfUserResponseDto? GetUserChats(ChatsOfUserRequestDto chatsRequestDto);
     }
 }

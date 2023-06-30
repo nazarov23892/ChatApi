@@ -48,7 +48,7 @@ namespace ChatApi.BLL.Services.Chats.Concrete
             if (userIds.Distinct().Count() < userIds.Count())
             {
                 AddValidationError(
-                    errorMessage: "users contain duplicates", 
+                    errorMessage: "users contain duplicates",
                     memberName: nameof(createRequestDto.Users));
                 return null;
             }
@@ -77,6 +77,24 @@ namespace ChatApi.BLL.Services.Chats.Concrete
             return new CreateChatResponseDto
             {
                 ChatId = chat.ChatId
+            };
+        }
+
+        public ChatsOfUserResponseDto? GetUserChats(ChatsOfUserRequestDto chatsRequestDto)
+        {
+            var chats = _chatRepository.FindByUser(chatsRequestDto.User);
+            if (chats == null || !chats.Any())
+            {
+                return null;
+            }
+            return new ChatsOfUserResponseDto
+            {
+                Chats = chats.Select(c => new ChatItemDto
+                {
+                    Id = c.ChatId,
+                    Name = c.Name,
+                    CreatedAt = c.CreatedAt.ToString(format: "yyyy-MM-dd HH:mm:ss")
+                })
             };
         }
     }

@@ -70,6 +70,30 @@ namespace ChatApi.WEB
                     return Results.Ok(value: response);
                 });
 
+            app.MapGet(
+                pattern: "/api/chats",
+                handler: ([FromBody] ChatsOfUserRequestDto? chatsOfUserRequestDto, IChatService chatService) =>
+                {
+                    if (chatsOfUserRequestDto == null)
+                    {
+                        return Results.ValidationProblem(
+                            errors: new Dictionary<string, string[]>
+                            {
+                                ["empty or ivalid request param value"] = Array.Empty<string>()
+                            });
+                    }
+                    ChatsOfUserResponseDto? response = chatService.GetUserChats(chatsOfUserRequestDto);
+                    if (chatService.HasValidationProblems)
+                    {
+                        return Results.ValidationProblem(chatService.ValidationProblems);
+                    }
+                    if (response == null)
+                    {
+                        return Results.NotFound();
+                    }
+                    return Results.Ok(value: response);
+                });
+
             app.Run();
         }
     }
