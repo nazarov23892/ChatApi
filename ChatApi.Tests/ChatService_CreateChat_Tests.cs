@@ -20,9 +20,10 @@ namespace ChatApi.Tests
         {
             // arrange
 
-            Mock<IChatRepository> mock = new Mock<IChatRepository>();
+            Mock<IChatRepository> chatRepositoryMock = new Mock<IChatRepository>();
+            Mock<IUserRepository> userRepositoryMock = new Mock<IUserRepository>();
 
-            ChatService target = new ChatService(mock.Object);
+            ChatService target = new ChatService(chatRepositoryMock.Object, userRepositoryMock.Object);
 
             // act
 
@@ -40,7 +41,7 @@ namespace ChatApi.Tests
             Assert.Contains(
                 expectedSubstring: "Name field is required",
                 actualString: target.ValidationProblems.Keys.Single());
-            mock.Verify(
+            chatRepositoryMock.Verify(
                 expression: m => m.Add(It.IsAny<Chat>()),
                 times: Times.Never);
         }
@@ -50,9 +51,10 @@ namespace ChatApi.Tests
         {
             // arrange
 
-            Mock<IChatRepository> mock = new Mock<IChatRepository>();
+            Mock<IChatRepository> chatRepositoryMock = new Mock<IChatRepository>();
+            Mock<IUserRepository> userRepositoryMock = new Mock<IUserRepository>();
 
-            ChatService target = new ChatService(mock.Object);
+            ChatService target = new ChatService(chatRepositoryMock.Object, userRepositoryMock.Object);
 
             // act
 
@@ -73,7 +75,7 @@ namespace ChatApi.Tests
             Assert.Contains(
                 expectedSubstring: "minimum length of 3",
                 actualString: target.ValidationProblems.Keys.Single());
-            mock.Verify(
+            chatRepositoryMock.Verify(
                 expression: m => m.Add(It.IsAny<Chat>()),
                 times: Times.Never);
         }
@@ -83,9 +85,10 @@ namespace ChatApi.Tests
         {
             // arrange
 
-            Mock<IChatRepository> mock = new Mock<IChatRepository>();
+            Mock<IChatRepository> chatRepositoryMock = new Mock<IChatRepository>();
+            Mock<IUserRepository> userRepositoryMock = new Mock<IUserRepository>();
 
-            ChatService target = new ChatService(mock.Object);
+            ChatService target = new ChatService(chatRepositoryMock.Object, userRepositoryMock.Object);
 
             // act
 
@@ -106,7 +109,7 @@ namespace ChatApi.Tests
             Assert.Contains(
                 expectedSubstring: "minimum length of 3",
                 actualString: target.ValidationProblems.Keys.Single());
-            mock.Verify(
+            chatRepositoryMock.Verify(
                 expression: m => m.Add(It.IsAny<Chat>()),
                 times: Times.Never);
         }
@@ -116,7 +119,8 @@ namespace ChatApi.Tests
         {
             // arrange
 
-            Mock<IChatRepository> mock = new Mock<IChatRepository>();
+            Mock<IChatRepository> chatRepositoryMock = new Mock<IChatRepository>();
+            Mock<IUserRepository> userRepositoryMock = new Mock<IUserRepository>();
 
             CreateChatRequestDto[] requests = new[]
             {
@@ -128,7 +132,7 @@ namespace ChatApi.Tests
 
             foreach (var request in requests)
             {
-                ChatService target = new ChatService(mock.Object);
+                ChatService target = new ChatService(chatRepositoryMock.Object, userRepositoryMock.Object);
 
                 // act
 
@@ -142,7 +146,7 @@ namespace ChatApi.Tests
                 Assert.Contains(
                     expectedSubstring: "Name must start with a letter and can only contain letters and numbers",
                     actualString: target.ValidationProblems.Keys.Single());
-                mock.Verify(
+                chatRepositoryMock.Verify(
                     expression: m => m.Add(It.IsAny<Chat>()),
                     times: Times.Never);
             }
@@ -153,8 +157,10 @@ namespace ChatApi.Tests
         {
             // arrange
 
-            Mock<IChatRepository> mock = new Mock<IChatRepository>();
-            mock.Setup(expression: m => m.FindByName(It.IsAny<string>()))
+            Mock<IChatRepository> chatRepositoryMock = new Mock<IChatRepository>();
+            Mock<IUserRepository> userRepositoryMock = new Mock<IUserRepository>();
+
+            chatRepositoryMock.Setup(expression: m => m.FindByName(It.IsAny<string>()))
                 .Returns<string>(
                     valueFunction: s =>
                         s.Equals("chat1", comparisonType: StringComparison.OrdinalIgnoreCase)
@@ -165,7 +171,7 @@ namespace ChatApi.Tests
                         }
                         : null);
 
-            ChatService target = new ChatService(mock.Object);
+            ChatService target = new ChatService(chatRepositoryMock.Object, userRepositoryMock.Object);
 
             // act
 
@@ -183,7 +189,7 @@ namespace ChatApi.Tests
             Assert.Contains(
                 expectedSubstring: "the same name already exists",
                 actualString: target.ValidationProblems.Keys.Single());
-            mock.Verify(
+            chatRepositoryMock.Verify(
                 expression: m => m.Add(It.IsAny<Chat>()),
                 times: Times.Never);
         }
