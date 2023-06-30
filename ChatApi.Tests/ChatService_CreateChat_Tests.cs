@@ -193,5 +193,91 @@ namespace ChatApi.Tests
                 expression: m => m.Add(It.IsAny<Chat>()),
                 times: Times.Never);
         }
+
+        [Fact]
+        public void Cannot_Create_Chat_When_Users_Number_Less_2()
+        {
+            // arrange
+
+            Mock<IChatRepository> chatRepositoryMock = new Mock<IChatRepository>();
+            Mock<IUserRepository> userRepositoryMock = new Mock<IUserRepository>();
+
+            chatRepositoryMock
+                .Setup(expression: m => m.FindByName(It.IsAny<string>()))
+                .Returns<string>(valueFunction: s => null);
+
+            CreateChatRequestDto[] requests = new[]
+            {
+                new CreateChatRequestDto{Name = "abc1", Users = Array.Empty<string>()},
+                new CreateChatRequestDto{Name = "abc2", Users = new[] { "aaa" }}
+            };
+
+            foreach (var request in requests)
+            {
+                ChatService target = new ChatService(chatRepositoryMock.Object, userRepositoryMock.Object);
+
+                // act
+
+                CreateChatResponseDto? result = target.Create(request);
+
+                // assert
+
+                Assert.Null(result);
+                Assert.True(target.HasValidationProblems);
+                Assert.Single(target.ValidationProblems);
+                Assert.Contains(
+                    expectedSubstring: "Users must be",
+                    actualString: target.ValidationProblems.Keys.Single());
+                Assert.Contains(
+                    expectedSubstring: "with a minimum length",
+                    actualString: target.ValidationProblems.Keys.Single());
+                chatRepositoryMock.Verify(
+                    expression: m => m.Add(It.IsAny<Chat>()),
+                    times: Times.Never);
+            }
+        }
+
+        [Fact]
+        public void Cannot_Create_Chat_When_Users_Has_Nonexist()
+        {
+            // arrange
+
+            Mock<IChatRepository> chatRepositoryMock = new Mock<IChatRepository>();
+            Mock<IUserRepository> userRepositoryMock = new Mock<IUserRepository>();
+
+            chatRepositoryMock
+                .Setup(expression: m => m.FindByName(It.IsAny<string>()))
+                .Returns<string>(valueFunction: s => null);
+
+            userRepositoryMock
+                .Setup(expression: m => m.GetByIds(It.IsAny<IEnumerable<string>>()))
+                .Returns<IEnumerable<string>>(valueFunction: s => new[]
+                {
+                    new User { UserId = "001", UserName = "user1" },
+                    new User { UserId = "002", UserName = "user2" },
+                });
+
+            ChatService target = new ChatService(chatRepositoryMock.Object, userRepositoryMock.Object);
+
+            // act
+
+            CreateChatResponseDto? result = target.Create(new CreateChatRequestDto
+            {
+                Name = "chat1",
+                Users = new[] { "001", "002", "003" }
+            });
+
+            // assert
+
+            Assert.Null(result);
+            Assert.True(target.HasValidationProblems);
+            Assert.Single(target.ValidationProblems);
+            Assert.Contains(
+                expectedSubstring: "user not found",
+                actualString: target.ValidationProblems.Keys.Single());
+            chatRepositoryMock.Verify(
+                expression: m => m.Add(It.IsAny<Chat>()),
+                times: Times.Never);
+        }
     }
 }
