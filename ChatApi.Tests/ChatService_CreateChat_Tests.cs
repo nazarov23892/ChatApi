@@ -279,5 +279,40 @@ namespace ChatApi.Tests
                 expression: m => m.Add(It.IsAny<Chat>()),
                 times: Times.Never);
         }
+
+        [Fact]
+        public void Cannot_Create_Chat_When_Users_Have_Duplicate()
+        {
+            // arrange
+
+            Mock<IChatRepository> chatRepositoryMock = new Mock<IChatRepository>();
+            Mock<IUserRepository> userRepositoryMock = new Mock<IUserRepository>();
+
+            chatRepositoryMock
+                .Setup(expression: m => m.FindByName(It.IsAny<string>()))
+                .Returns<string>(valueFunction: s => null);
+
+            ChatService target = new ChatService(chatRepositoryMock.Object, userRepositoryMock.Object);
+
+            // act
+
+            CreateChatResponseDto? result = target.Create(new CreateChatRequestDto
+            {
+                Name = "chat1",
+                Users = new[] { "aaa", "bbb", "aaa" }
+            });
+
+            // assert
+
+            Assert.Null(result);
+            Assert.True(target.HasValidationProblems);
+            Assert.Single(target.ValidationProblems);
+            Assert.Contains(
+                expectedSubstring: "users contain duplicates",
+                actualString: target.ValidationProblems.Keys.Single());
+            chatRepositoryMock.Verify(
+                expression: m => m.Add(It.IsAny<Chat>()),
+                times: Times.Never);
+        }
     }
 }

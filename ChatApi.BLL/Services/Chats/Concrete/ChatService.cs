@@ -45,14 +45,18 @@ namespace ChatApi.BLL.Services.Chats.Concrete
                 Name = createRequestDto.Name
             };
             var userIds = createRequestDto.Users;
-            if(userIds.Any(s => string.IsNullOrEmpty(s)))
+            if (userIds.Distinct().Count() < userIds.Count())
             {
-                AddValidationError(errorMessage: "users contain empty value");
+                AddValidationError(
+                    errorMessage: "users contain duplicates", 
+                    memberName: nameof(createRequestDto.Users));
                 return null;
             }
             if (userIds.Distinct().Count() != userIds.Count())
             {
-                AddValidationError(errorMessage: "users contain duplicates");
+                AddValidationError(
+                    errorMessage: "users contain duplicates",
+                    memberName: nameof(createRequestDto.Users));
                 return null;
             }
             var users = _userRepository.GetByIds(userIds)
