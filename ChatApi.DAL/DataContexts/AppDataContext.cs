@@ -17,5 +17,6 @@ namespace ChatApi.DAL.DataContexts
         }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<Chat> Chats { get; set; }
     }
 }
