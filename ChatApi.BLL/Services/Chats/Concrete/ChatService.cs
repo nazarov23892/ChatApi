@@ -80,6 +80,30 @@ namespace ChatApi.BLL.Services.Chats.Concrete
             };
         }
 
+        public IEnumerable<ChatMessageItemDto>? GetChatMessages(ChatMessagesRequestDto chatMessagesRequestDto)
+        {
+            if (!ValidateObject(chatMessagesRequestDto))
+            {
+                return null;
+            }
+            Chat? chatWithMessages = _chatRepository.GetChatWithMessagesOrderedByCreatedAt(chatId: chatMessagesRequestDto.Chat);
+            if (chatWithMessages == null)
+            {
+                AddValidationError(
+                    errorMessage: "chat not found", 
+                    memberName: $"chatId='{chatMessagesRequestDto.Chat}'");
+                return null;
+            }
+            return chatWithMessages.Messages.Select(m => new ChatMessageItemDto
+            {
+                Id = m.MessageId,
+                Text = m.Text,
+                AuthorId = m.User.UserId,
+                AuthorName = m.User.UserName,
+                CreatedAt = m.CreatedAt.ToString(format: "yyyy-MM-dd HH:mm:ss")
+            });
+        }
+
         public ChatsOfUserResponseDto? GetUserChats(ChatsOfUserRequestDto chatsRequestDto)
         {
             var chats = _chatRepository.FindByUser(chatsRequestDto.User);

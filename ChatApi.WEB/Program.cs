@@ -31,7 +31,7 @@ namespace ChatApi.WEB
 
             if (app.Environment.IsDevelopment())
             {
-                using(var scope = app.Services.CreateScope())
+                using (var scope = app.Services.CreateScope())
                 {
                     var efDbContext = scope.ServiceProvider.GetRequiredService<AppDataContext>();
                     SeedDataTool.SeedData(efDbContext);
@@ -97,13 +97,28 @@ namespace ChatApi.WEB
                     {
                         return Results.ValidationProblem(chatService.ValidationProblems);
                     }
-                    if (response == null)
-                    {
-                        return Results.NotFound();
-                    }
                     return Results.Ok(value: response);
                 });
 
+            app.MapPost(
+                pattern: "/api/messages/chat",
+                handler: ([FromBody] ChatMessagesRequestDto? chatMessagesRequestDto, IChatService chatService) =>
+                {
+                    if (chatMessagesRequestDto == null)
+                    {
+                        return Results.ValidationProblem(
+                            errors: new Dictionary<string, string[]>
+                            {
+                                ["empty or ivalid request param value"] = Array.Empty<string>()
+                            });
+                    }
+                    IEnumerable<ChatMessageItemDto>? chatMessagesResponse = chatService.GetChatMessages(chatMessagesRequestDto);
+                    if (chatService.HasValidationProblems)
+                    {
+                        return Results.ValidationProblem(chatService.ValidationProblems);
+                    }
+                    return Results.Ok(value: chatMessagesResponse);
+                });
             app.Run();
         }
     }

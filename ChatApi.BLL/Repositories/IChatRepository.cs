@@ -12,5 +12,6 @@ namespace ChatApi.BLL.Repositories
         void Add(Chat chat);
         Chat? FindByName(string name);
         IEnumerable<Chat> FindByUser(string userId);
+        Chat? GetChatWithMessagesOrderedByCreatedAt(string chatId);
     }
 }

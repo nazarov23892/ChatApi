@@ -12,5 +12,6 @@ namespace ChatApi.BLL.Services.Chats
     {
         CreateChatResponseDto? Create(CreateChatRequestDto createRequestDto);
         ChatsOfUserResponseDto? GetUserChats(ChatsOfUserRequestDto chatsRequestDto);
+        IEnumerable<ChatMessageItemDto>? GetChatMessages(ChatMessagesRequestDto chatMessagesRequestDto);
     }
 }

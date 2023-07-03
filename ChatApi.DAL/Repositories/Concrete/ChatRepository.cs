@@ -1,6 +1,7 @@
 ﻿using ChatApi.BLL.Entities;
 using ChatApi.BLL.Repositories;
 using ChatApi.DAL.DataContexts;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,6 +42,26 @@ namespace ChatApi.DAL.Repositories.Concrete
                         .Where(u => u.UserId.Equals(userId))
                         .Any())
                 .ToArray();
+        }
+
+        public Chat? GetChatWithMessagesOrderedByCreatedAt(string chatId)
+        {
+            return _efDbContext.Chats
+                .Select(c => new Chat
+                {
+                    ChatId = c.ChatId,
+                    Messages = c.Messages
+                        .OrderByDescending(m => m.CreatedAt)
+                        .Select(m=>new Message
+                        {
+                            MessageId = m.MessageId,
+                            Text = m.Text,
+                            CreatedAt = m.CreatedAt,
+                            User = m.User
+                        })
+                        .ToArray()
+                })
+                .SingleOrDefault(c => c.ChatId == chatId);
         }
     }
 }
