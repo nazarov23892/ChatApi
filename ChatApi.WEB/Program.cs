@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using ChatApi.BLL.Services.Chats.Concrete;
 using ChatApi.BLL.Services.Chats;
 using ChatApi.BLL.Services.Chats.DTOs;
+using ChatApi.DAL.SeedData;
 
 namespace ChatApi.WEB
 {
@@ -27,6 +28,15 @@ namespace ChatApi.WEB
             builder.Services.AddTransient<IChatService, ChatService>();
 
             var app = builder.Build();
+
+            if (app.Environment.IsDevelopment())
+            {
+                using(var scope = app.Services.CreateScope())
+                {
+                    var efDbContext = scope.ServiceProvider.GetRequiredService<AppDataContext>();
+                    SeedDataTool.SeedData(efDbContext);
+                }
+            }
 
             app.MapGet("/", () => "Hello World!");
 
