@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,6 +11,6 @@ namespace ChatApi.BLL.Basic
     {
         bool HasValidationProblems { get; }
 
-        Dictionary<string, string[]> ValidationProblems { get; }
+        IImmutableList<string> ValidationProblems { get; }
     }
 }

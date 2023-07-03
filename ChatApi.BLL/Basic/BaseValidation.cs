@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ChatApi.BLL.Basic
 {
-    public class BaseValidation: IValidatableService
+    public class BaseValidation : IValidatableService
     {
         protected List<ValidationResult> _validationProblems = new List<ValidationResult>();
 
@@ -16,18 +17,12 @@ namespace ChatApi.BLL.Basic
             get => _validationProblems.Any();
         }
 
-        public Dictionary<string, string[]> ValidationProblems
+        public IImmutableList<string> ValidationProblems
         {
             get => _validationProblems
-               .SelectMany(
-                   collectionSelector: l => l.MemberNames,
-                   resultSelector: (errorMessage, memberName) => new { errorMessage = errorMessage.ErrorMessage ?? string.Empty, memberName })
-               .GroupBy(
-                   keySelector: e => e.errorMessage,
-                   elementSelector: e => e.memberName)
-               .ToDictionary(
-                    keySelector: g => g.Key,
-                    elementSelector: g => g.ToArray());
+                .Select(vr => vr.ErrorMessage ?? string.Empty)
+                .Where(s => !string.IsNullOrEmpty(s))
+                .ToImmutableList();
         }
 
         protected bool ValidateObject(object instance)
