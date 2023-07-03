@@ -10,6 +10,7 @@ using ChatApi.BLL.Services.Chats.Concrete;
 using ChatApi.BLL.Services.Chats;
 using ChatApi.BLL.Services.Chats.DTOs;
 using ChatApi.DAL.SeedData;
+using ChatApi.BLL.Services;
 
 namespace ChatApi.WEB
 {
@@ -46,12 +47,12 @@ namespace ChatApi.WEB
                 {
                     if (createUserRequestDto == null)
                     {
-                        return Results.BadRequest(error: new { Error = "empty or invalid request param value" });
+                        return Results.BadRequest(error: new ErrorResponseDto("empty or invalid request param value"));
                     }
                     var response = userService.CreateUser(createUserRequestDto);
                     if (userService.HasValidationProblems)
                     {
-                        return Results.BadRequest(error: new { Error = userService.ValidationProblems.FirstOrDefault() });
+                        return Results.BadRequest(error: new ErrorResponseDto(userService.ValidationProblems.FirstOrDefault()));
                     }
                     return Results.Ok(value: response);
                 });
@@ -62,7 +63,7 @@ namespace ChatApi.WEB
                 {
                     if (createChatRequestDto == null)
                     {
-                        return Results.BadRequest(error: new { Error = "empty or invalid request param value" });
+                        return Results.BadRequest(error: new ErrorResponseDto("empty or invalid request param value"));
                     }
                     var response = chatService.Create(createChatRequestDto);
                     if (chatService.HasValidationProblems)
@@ -78,12 +79,12 @@ namespace ChatApi.WEB
                 {
                     if (chatsOfUserRequestDto == null)
                     {
-                        return Results.BadRequest(error: new { Error = "empty or invalid request param value" });
+                        return Results.BadRequest(error: new ErrorResponseDto("empty or invalid request param value"));
                     }
                     ChatsOfUserResponseDto? response = chatService.GetUserChats(chatsOfUserRequestDto);
                     if (chatService.HasValidationProblems)
                     {
-                        return Results.BadRequest(error: new { Error = chatService.ValidationProblems.FirstOrDefault() });
+                        return Results.BadRequest(error: new ErrorResponseDto(chatService.ValidationProblems.FirstOrDefault()));
                     }
                     return Results.Ok(value: response);
                 });
@@ -94,12 +95,12 @@ namespace ChatApi.WEB
                 {
                     if (chatMessagesRequestDto == null)
                     {
-                        return Results.BadRequest(error: new { Error = "empty or invalid request param value" });
+                        return Results.BadRequest(error: new ErrorResponseDto("empty or invalid request param value"));
                     }
                     IEnumerable<ChatMessageItemDto>? chatMessagesResponse = chatService.GetChatMessages(chatMessagesRequestDto);
                     if (chatService.HasValidationProblems)
                     {
-                        return Results.BadRequest(error: new { Error = chatService.ValidationProblems.FirstOrDefault() });
+                        return Results.BadRequest(error: new ErrorResponseDto(chatService.ValidationProblems.FirstOrDefault()));
                     }
                     return Results.Ok(value: chatMessagesResponse);
                 });
