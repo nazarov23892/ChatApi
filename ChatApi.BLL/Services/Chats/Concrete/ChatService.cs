@@ -90,8 +90,8 @@ namespace ChatApi.BLL.Services.Chats.Concrete
             if (chatWithMessages == null)
             {
                 AddValidationError(
-                    errorMessage: "chat not found", 
-                    memberName: $"chatId='{chatMessagesRequestDto.Chat}'");
+                    errorMessage: $"chat not found: chatId='{chatMessagesRequestDto.Chat}'", 
+                    memberName: "-");
                 return null;
             }
             return chatWithMessages.Messages.Select(m => new ChatMessageItemDto

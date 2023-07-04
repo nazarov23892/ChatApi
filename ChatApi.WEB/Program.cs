@@ -68,7 +68,7 @@ namespace ChatApi.WEB
                     var response = chatService.Create(createChatRequestDto);
                     if (chatService.HasValidationProblems)
                     {
-                        return Results.BadRequest(error: new { Error = chatService.ValidationProblems.FirstOrDefault() });
+                        return Results.BadRequest(new ErrorResponseDto(chatService.ValidationProblems.FirstOrDefault()));
                     }
                     return Results.Ok(value: response);
                 });
@@ -84,7 +84,10 @@ namespace ChatApi.WEB
                     ChatsOfUserResponseDto? response = chatService.GetUserChats(chatsOfUserRequestDto);
                     if (chatService.HasValidationProblems)
                     {
-                        return Results.BadRequest(error: new ErrorResponseDto(chatService.ValidationProblems.FirstOrDefault()));
+                        var errorResonseDto = new ErrorResponseDto(chatService.ValidationProblems.FirstOrDefault());
+                        return errorResonseDto.Error?.Contains("user not found") ?? false
+                            ? Results.NotFound(errorResonseDto)
+                            : Results.BadRequest(errorResonseDto);
                     }
                     return Results.Ok(value: response);
                 });
@@ -100,7 +103,10 @@ namespace ChatApi.WEB
                     IEnumerable<ChatMessageItemDto>? chatMessagesResponse = chatService.GetChatMessages(chatMessagesRequestDto);
                     if (chatService.HasValidationProblems)
                     {
-                        return Results.BadRequest(error: new ErrorResponseDto(chatService.ValidationProblems.FirstOrDefault()));
+                        var errorResonseDto = new ErrorResponseDto(chatService.ValidationProblems.FirstOrDefault());
+                        return errorResonseDto.Error?.Contains("chat not found") ?? false
+                            ? Results.NotFound(errorResonseDto) 
+                            : Results.BadRequest(errorResonseDto);
                     }
                     return Results.Ok(value: chatMessagesResponse);
                 });
