@@ -31,7 +31,7 @@ namespace ChatApi.Tests
             Assert.Single(target.ValidationProblems);
             Assert.Contains(
                 expectedSubstring: "UserName field is required",
-                actualString: target.ValidationProblems.Keys.Single());
+                actualString: target.ValidationProblems.Single());
             mock.Verify(
                 expression: m => m.Add(It.IsAny<User>()),
                 times: Times.Never);
@@ -60,10 +60,10 @@ namespace ChatApi.Tests
             Assert.Single(target.ValidationProblems);
             Assert.Contains(
                 expectedSubstring: "UserName must be",
-                actualString: target.ValidationProblems.Keys.Single());
+                actualString: target.ValidationProblems.Single());
             Assert.Contains(
                 expectedSubstring: "minimum length of 3",
-                actualString: target.ValidationProblems.Keys.Single());
+                actualString: target.ValidationProblems.Single());
             mock.Verify(
                 expression: m => m.Add(It.IsAny<User>()),
                 times: Times.Never);
@@ -92,10 +92,10 @@ namespace ChatApi.Tests
             Assert.Single(target.ValidationProblems);
             Assert.Contains(
                 expectedSubstring: "UserName must be",
-                actualString: target.ValidationProblems.Keys.Single());
+                actualString: target.ValidationProblems.Single());
             Assert.Contains(
                 expectedSubstring: "maximum length of 20",
-                actualString: target.ValidationProblems.Keys.Single());
+                actualString: target.ValidationProblems.Single());
             mock.Verify(
                 expression: m => m.Add(It.IsAny<User>()),
                 times: Times.Never);
@@ -132,7 +132,7 @@ namespace ChatApi.Tests
                 Assert.Single(target.ValidationProblems);
                 Assert.Contains(
                     expectedSubstring: "Name must start with a letter and can only contain letters and numbers",
-                    actualString: target.ValidationProblems.Keys.Single());
+                    actualString: target.ValidationProblems.Single());
                 mock.Verify(
                     expression: m => m.Add(It.IsAny<User>()),
                     times: Times.Never);
@@ -172,7 +172,7 @@ namespace ChatApi.Tests
             Assert.Single(target.ValidationProblems);
             Assert.Contains(
                 expectedSubstring: "the same name already exists",
-                actualString: target.ValidationProblems.Keys.Single());
+                actualString: target.ValidationProblems.Single());
             mock.Verify(
                 expression: m => m.Add(It.IsAny<User>()),
                 times: Times.Never);

@@ -40,7 +40,7 @@ namespace ChatApi.Tests
             Assert.Single(target.ValidationProblems);
             Assert.Contains(
                 expectedSubstring: "Name field is required",
-                actualString: target.ValidationProblems.Keys.Single());
+                actualString: target.ValidationProblems.Single());
             chatRepositoryMock.Verify(
                 expression: m => m.Add(It.IsAny<Chat>()),
                 times: Times.Never);
@@ -71,10 +71,10 @@ namespace ChatApi.Tests
             Assert.Single(target.ValidationProblems);
             Assert.Contains(
                 expectedSubstring: "Name must be",
-                actualString: target.ValidationProblems.Keys.Single());
+                actualString: target.ValidationProblems.Single());
             Assert.Contains(
                 expectedSubstring: "minimum length of 3",
-                actualString: target.ValidationProblems.Keys.Single());
+                actualString: target.ValidationProblems.Single());
             chatRepositoryMock.Verify(
                 expression: m => m.Add(It.IsAny<Chat>()),
                 times: Times.Never);
@@ -105,10 +105,10 @@ namespace ChatApi.Tests
             Assert.Single(target.ValidationProblems);
             Assert.Contains(
                 expectedSubstring: "Name must be",
-                actualString: target.ValidationProblems.Keys.Single());
+                actualString: target.ValidationProblems.Single());
             Assert.Contains(
                 expectedSubstring: "minimum length of 3",
-                actualString: target.ValidationProblems.Keys.Single());
+                actualString: target.ValidationProblems.Single());
             chatRepositoryMock.Verify(
                 expression: m => m.Add(It.IsAny<Chat>()),
                 times: Times.Never);
@@ -145,7 +145,7 @@ namespace ChatApi.Tests
                 Assert.Single(target.ValidationProblems);
                 Assert.Contains(
                     expectedSubstring: "Name must start with a letter and can only contain letters and numbers",
-                    actualString: target.ValidationProblems.Keys.Single());
+                    actualString: target.ValidationProblems.Single());
                 chatRepositoryMock.Verify(
                     expression: m => m.Add(It.IsAny<Chat>()),
                     times: Times.Never);
@@ -188,7 +188,7 @@ namespace ChatApi.Tests
             Assert.Single(target.ValidationProblems);
             Assert.Contains(
                 expectedSubstring: "the same name already exists",
-                actualString: target.ValidationProblems.Keys.Single());
+                actualString: target.ValidationProblems.Single());
             chatRepositoryMock.Verify(
                 expression: m => m.Add(It.IsAny<Chat>()),
                 times: Times.Never);
@@ -227,10 +227,10 @@ namespace ChatApi.Tests
                 Assert.Single(target.ValidationProblems);
                 Assert.Contains(
                     expectedSubstring: "Users must be",
-                    actualString: target.ValidationProblems.Keys.Single());
+                    actualString: target.ValidationProblems.Single());
                 Assert.Contains(
                     expectedSubstring: "with a minimum length",
-                    actualString: target.ValidationProblems.Keys.Single());
+                    actualString: target.ValidationProblems.Single());
                 chatRepositoryMock.Verify(
                     expression: m => m.Add(It.IsAny<Chat>()),
                     times: Times.Never);
@@ -274,7 +274,7 @@ namespace ChatApi.Tests
             Assert.Single(target.ValidationProblems);
             Assert.Contains(
                 expectedSubstring: "user not found",
-                actualString: target.ValidationProblems.Keys.Single());
+                actualString: target.ValidationProblems.Single());
             chatRepositoryMock.Verify(
                 expression: m => m.Add(It.IsAny<Chat>()),
                 times: Times.Never);
@@ -309,7 +309,7 @@ namespace ChatApi.Tests
             Assert.Single(target.ValidationProblems);
             Assert.Contains(
                 expectedSubstring: "users contain duplicates",
-                actualString: target.ValidationProblems.Keys.Single());
+                actualString: target.ValidationProblems.Single());
             chatRepositoryMock.Verify(
                 expression: m => m.Add(It.IsAny<Chat>()),
                 times: Times.Never);
