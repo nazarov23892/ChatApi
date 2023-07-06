@@ -23,6 +23,6 @@ namespace ChatApi.BLL.Entities
 
         [Required]
         public string AuthorId { get; set; } = string.Empty;
-        public User User { get; set; }
+        public User Author { get; set; }
     }
 }

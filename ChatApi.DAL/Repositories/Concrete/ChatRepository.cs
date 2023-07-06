@@ -57,7 +57,7 @@ namespace ChatApi.DAL.Repositories.Concrete
                             MessageId = m.MessageId,
                             Text = m.Text,
                             CreatedAt = m.CreatedAt,
-                            User = m.User
+                            Author = m.Author
                         })
                         .ToArray()
                 })

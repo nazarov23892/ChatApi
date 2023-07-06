@@ -98,8 +98,8 @@ namespace ChatApi.BLL.Services.Chats.Concrete
             {
                 Id = m.MessageId,
                 Text = m.Text,
-                AuthorId = m.User.UserId,
-                AuthorName = m.User.UserName,
+                AuthorId = m.Author.UserId,
+                AuthorName = m.Author.UserName,
                 CreatedAt = m.CreatedAt.ToString(format: "yyyy-MM-dd HH:mm:ss")
             });
         }
