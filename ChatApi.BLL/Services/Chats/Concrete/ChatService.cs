@@ -106,14 +106,17 @@ namespace ChatApi.BLL.Services.Chats.Concrete
 
         public ChatsOfUserResponseDto? GetUserChats(ChatsOfUserRequestDto chatsRequestDto)
         {
-            var chats = _chatRepository.FindByUser(chatsRequestDto.User);
-            if (chats == null || !chats.Any())
+            var user = _chatRepository.GetUserWithChats(chatsRequestDto.User);
+            if (user == null)
             {
+                AddValidationError(
+                    errorMessage: $"user not found: Id='{chatsRequestDto.User}'",
+                    memberName: "-");
                 return null;
             }
             return new ChatsOfUserResponseDto
             {
-                Chats = chats.Select(c => new ChatItemDto
+                Chats = user.Chats.Select(c => new ChatItemDto
                 {
                     Id = c.ChatId,
                     Name = c.Name,

@@ -35,13 +35,11 @@ namespace ChatApi.DAL.Repositories.Concrete
                 .SingleOrDefault(c => name.Equals(c.Name, StringComparison.OrdinalIgnoreCase));
         }
 
-        public IEnumerable<Chat> FindByUser(string userId)
+        public User? GetUserWithChats(string userId)
         {
-            return _efDbContext.Chats
-                .Where(c => c.Users
-                        .Where(u => u.UserId.Equals(userId))
-                        .Any())
-                .ToArray();
+            return _efDbContext.Users
+                .Include(u => u.Chats)
+                .SingleOrDefault(u => userId.Equals(u.UserId, StringComparison.OrdinalIgnoreCase));
         }
 
         public Chat? GetChatWithMessagesOrderedByCreatedAt(string chatId)
@@ -52,7 +50,7 @@ namespace ChatApi.DAL.Repositories.Concrete
                     ChatId = c.ChatId,
                     Messages = c.Messages
                         .OrderByDescending(m => m.CreatedAt)
-                        .Select(m=>new Message
+                        .Select(m => new Message
                         {
                             MessageId = m.MessageId,
                             Text = m.Text,
