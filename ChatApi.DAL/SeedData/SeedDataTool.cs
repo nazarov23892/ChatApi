@@ -21,70 +21,58 @@ namespace ChatApi.DAL.SeedData
             {
                 UserId = new Guid("00000000-0000-0000-0000-000000000001").ToString(),
                 UserName = "user_1",
-                CreatedAt = new DateTime(
-                    year: 2023,
-                    month: 3,
-                    day: 16,
-                    hour: 12,
-                    minute: 1,
-                    second: 41)
+                CreatedAt = DateTime.Parse("2023-03-16 12:01:41")
             };
             User user2 = new User
             {
                 UserId = new Guid("00000000-0000-0000-0000-000000000002").ToString(),
                 UserName = "user_2",
-
-                CreatedAt = new DateTime(
-                    year: 2023,
-                    month: 1,
-                    day: 12,
-                    hour: 15,
-                    minute: 27,
-                    second: 16)
+                CreatedAt = DateTime.Parse("2023-01-12 15:27:16")
             };
             User user3 = new User
             {
                 UserId = new Guid("00000000-0000-0000-0000-000000000003").ToString(),
                 UserName = "user_3",
-                CreatedAt = new DateTime(
-                    year: 2022,
-                    month: 02,
-                    day: 24,
-                    hour: 4,
-                    minute: 1,
-                    second: 15)
+                CreatedAt = DateTime.Parse("2022-02-24 04:01:15")
             };
 
             Chat chat1 = new Chat
             {
                 ChatId = new Guid("00000000-0000-0000-0000-000000000001").ToString(),
                 Name = "chat_1",
-                CreatedAt = new DateTime(
-                    year: 2023,
-                    month: 6,
-                    day: 20,
-                    hour: 11,
-                    minute: 16,
-                    second: 22),
-                Users = new List<User> { user1, user2 }
+                CreatedAt = DateTime.Parse("2023-06-20 11:16:22"),
+                Users = new List<User> { user1, user2 },
+                Messages = new List<Message>
+                {
+                    new Message { MessageId = "01", Author = user1, Text = "user1-message1", CreatedAt = DateTime.Parse("2023-06-21 13:00:00") },
+                    new Message { MessageId = "02", Author = user1, Text = "user1-message2", CreatedAt = DateTime.Parse("2023-06-22 13:06:11") },
+                }
             };
 
             Chat chat2 = new Chat
             {
                 ChatId = new Guid("00000000-0000-0000-0000-000000000002").ToString(),
                 Name = "chat_2",
-                CreatedAt = new DateTime(
-                    year: 2023,
-                    month: 4,
-                    day: 10,
-                    hour: 13,
-                    minute: 17,
-                    second: 9),
+                CreatedAt = DateTime.Parse("2023-04-10 13:17:09"),
+                Users = new List<User> { user1, user3 },
+                Messages = new List<Message>
+                {
+                    new Message { MessageId = "03", Author = user3, Text = "user3-message1", CreatedAt = DateTime.Parse("2023-06-21 13:00:00") },
+                    new Message { MessageId = "04", Author = user3, Text = "user3-message2", CreatedAt = DateTime.Parse("2023-06-23 13:06:11") },
+                }
+            };
+
+            Chat chat3 = new Chat
+            {
+                ChatId = new Guid("00000000-0000-0000-0000-000000000003").ToString(),
+                Name = "chat_3",
+                CreatedAt = DateTime.Parse("2023-01-11 17:16:11"),
                 Users = new List<User> { user1, user3 }
             };
 
             appDataContext.Chats.Add(chat1);
             appDataContext.Chats.Add(chat2);
+            appDataContext.Chats.Add(chat3);
             appDataContext.SaveChanges();
         }
     }

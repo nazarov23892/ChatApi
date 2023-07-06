@@ -38,7 +38,8 @@ namespace ChatApi.DAL.Repositories.Concrete
         public User? GetUserWithChats(string userId)
         {
             return _efDbContext.Users
-                .Include(u => u.Chats)
+                .Include(u => u.Chats
+                    .OrderByDescending(c => c.Messages.Max(m => (DateTime?)m.CreatedAt)))
                 .SingleOrDefault(u => userId.Equals(u.UserId, StringComparison.OrdinalIgnoreCase));
         }
 
