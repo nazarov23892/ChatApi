@@ -41,8 +41,9 @@ namespace ChatApi.WEB
 
             app.MapGet("/", () => "Hello World!");
 
+            // добавить нового пользователя
             app.MapPost(
-                pattern: "/api/users",
+                pattern: "/users/add",
                 handler: ([FromBody] CreateUserRequestDto? createUserRequestDto, IUserService userService) =>
                 {
                     if (createUserRequestDto == null)
@@ -54,11 +55,12 @@ namespace ChatApi.WEB
                     {
                         return Results.BadRequest(error: new ErrorResponseDto(userService.ValidationProblems.FirstOrDefault()));
                     }
-                    return Results.Ok(value: response);
+                    return Results.Created(uri: "", value: response);
                 });
 
+            // создать новый чат между пользователями
             app.MapPost(
-                pattern: "/api/chats",
+                pattern: "/chats/add",
                 handler: ([FromBody] CreateChatRequestDto? createChatRequestDto, IChatService chatService) =>
                 {
                     if (createChatRequestDto == null)
@@ -70,11 +72,12 @@ namespace ChatApi.WEB
                     {
                         return Results.BadRequest(new ErrorResponseDto(chatService.ValidationProblems.FirstOrDefault()));
                     }
-                    return Results.Ok(value: response);
+                    return Results.Created(uri: "", value: response);
                 });
 
-            app.MapGet(
-                pattern: "/api/chats",
+            // получить список чатов конкретного пользователя
+            app.MapPost(
+                pattern: "/chats/get",
                 handler: ([FromBody] ChatsOfUserRequestDto? chatsOfUserRequestDto, IChatService chatService) =>
                 {
                     if (chatsOfUserRequestDto == null)
@@ -92,8 +95,9 @@ namespace ChatApi.WEB
                     return Results.Ok(value: response);
                 });
 
+            // получить список сообщений в конкретном чате
             app.MapPost(
-                pattern: "/api/messages/chat",
+                pattern: "/messages/get",
                 handler: ([FromBody] ChatMessagesRequestDto? chatMessagesRequestDto, IChatService chatService) =>
                 {
                     if (chatMessagesRequestDto == null)
@@ -105,14 +109,15 @@ namespace ChatApi.WEB
                     {
                         var errorResonseDto = new ErrorResponseDto(chatService.ValidationProblems.FirstOrDefault());
                         return errorResonseDto.Error?.Contains("chat not found") ?? false
-                            ? Results.NotFound(errorResonseDto) 
+                            ? Results.NotFound(errorResonseDto)
                             : Results.BadRequest(errorResonseDto);
                     }
                     return Results.Ok(value: chatMessagesResponse);
                 });
 
+            // отправить сообщение в чат от лица пользователя
             app.MapPost(
-                pattern: "/api/messages/add",
+                pattern: "/messages/add",
                 handler: ([FromBody] PostMessageRequestDto? postMessageRequestDto, IChatService chatService) =>
                 {
                     if (postMessageRequestDto == null)
@@ -125,7 +130,7 @@ namespace ChatApi.WEB
                         var errorResonseDto = new ErrorResponseDto(chatService.ValidationProblems.FirstOrDefault());
                         return Results.BadRequest(errorResonseDto);
                     }
-                    return Results.Ok(value: response);
+                    return Results.Created(uri: "", value: response);
                 });
 
             app.Run();
