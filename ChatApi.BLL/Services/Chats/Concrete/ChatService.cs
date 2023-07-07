@@ -106,6 +106,10 @@ namespace ChatApi.BLL.Services.Chats.Concrete
 
         public ChatsOfUserResponseDto? GetUserChats(ChatsOfUserRequestDto chatsRequestDto)
         {
+            if (!ValidateObject(chatsRequestDto))
+            {
+                return null;
+            }
             var user = _chatRepository.GetUserWithChats(chatsRequestDto.User);
             if (user == null)
             {
