@@ -1,6 +1,7 @@
 ﻿using ChatApi.BLL.Entities;
 using ChatApi.BLL.Repositories;
 using ChatApi.DAL.DataContexts;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,7 +32,7 @@ namespace ChatApi.DAL.Repositories.Concrete
         public User? FindByName(string username)
         {
             return _efDbContext.Users
-                .SingleOrDefault(u => username.Equals(u.UserName, StringComparison.OrdinalIgnoreCase));
+                .SingleOrDefault(u => EF.Functions.Like(u.UserName, $"%{username}%"));
         }
 
         public IEnumerable<User> GetByIds(IEnumerable<string> userIds)
@@ -45,7 +46,7 @@ namespace ChatApi.DAL.Repositories.Concrete
         public User? GetUser(string userId)
         {
             return _efDbContext.Users
-                .SingleOrDefault(u => userId.Equals(u.UserId, StringComparison.OrdinalIgnoreCase));
+                .SingleOrDefault(u => EF.Functions.Like(u.UserId, $"%{userId}%"));
         }
     }
 }

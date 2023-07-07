@@ -32,7 +32,7 @@ namespace ChatApi.DAL.Repositories.Concrete
         public Chat? FindByName(string name)
         {
             return _efDbContext.Chats
-                .SingleOrDefault(c => name.Equals(c.Name, StringComparison.OrdinalIgnoreCase));
+                .SingleOrDefault(c => EF.Functions.Like(c.Name, $"%{name}%"));
         }
 
         public User? GetUserWithChats(string userId)
@@ -40,7 +40,7 @@ namespace ChatApi.DAL.Repositories.Concrete
             return _efDbContext.Users
                 .Include(u => u.Chats
                     .OrderByDescending(c => c.Messages.Max(m => (DateTime?)m.CreatedAt)))
-                .SingleOrDefault(u => userId.Equals(u.UserId, StringComparison.OrdinalIgnoreCase));
+                .SingleOrDefault(u => EF.Functions.Like(u.UserId, $"%{userId}%"));
         }
 
         public Chat? GetChatWithMessagesOrderedByCreatedAt(string chatId)
@@ -60,14 +60,14 @@ namespace ChatApi.DAL.Repositories.Concrete
                         })
                         .ToArray()
                 })
-                .SingleOrDefault(c => c.ChatId == chatId);
+                .SingleOrDefault(c => EF.Functions.Like(c.ChatId, $"%{chatId}%"));
         }
 
         public Chat? GetChatWithUsers(string chatId)
         {
             return _efDbContext.Chats
                 .Include(c => c.Users)
-                .SingleOrDefault(c => chatId.Equals(c.ChatId, StringComparison.OrdinalIgnoreCase));
+                .SingleOrDefault(c => EF.Functions.Like(c.ChatId, $"%{chatId}%"));
         }
 
         public void AddMessage(Message message)
