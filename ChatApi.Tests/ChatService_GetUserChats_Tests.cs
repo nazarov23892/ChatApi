@@ -15,6 +15,33 @@ namespace ChatApi.Tests
     public class ChatService_GetUserChats_Tests
     {
         [Fact]
+        public void Cannot_Get_When_UserId_Is_Empty()
+        {
+            // arrange
+
+            Mock<IChatRepository> chatRepositoryMock = new Mock<IChatRepository>();
+            Mock<IUserRepository> userRepositoryMock = new Mock<IUserRepository>();
+
+            ChatService target = new ChatService(chatRepositoryMock.Object, userRepositoryMock.Object);
+            ChatsOfUserRequestDto chatsOfUserRequestDto = new ChatsOfUserRequestDto { User = string.Empty };
+
+            // act
+
+            ChatsOfUserResponseDto? response = target.GetUserChats(chatsOfUserRequestDto);
+
+            // arrange
+
+            Assert.Null(response);
+            Assert.True(target.HasValidationProblems);
+            Assert.Single(target.ValidationProblems);
+            Assert.Contains(
+                expectedSubstring: "user field is required",
+                actualString: target.ValidationProblems.Single(),
+                comparisonType: StringComparison.OrdinalIgnoreCase
+                );
+        }
+
+        [Fact]
         public void Cannot_Get_When_UserId_Not_Found()
         {
             // arrange
