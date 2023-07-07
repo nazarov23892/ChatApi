@@ -133,5 +133,112 @@ namespace ChatApi.Tests
                 times: Times.Never
                 );
         }
+
+        [Fact]
+        public void Cannot_PostMessage_When_User_Not_Exist()
+        {
+            // arrange
+
+            Mock<IChatRepository> chatRepositoryMock = new Mock<IChatRepository>();
+            Mock<IUserRepository> userRepositoryMock = new Mock<IUserRepository>();
+
+            userRepositoryMock
+                .Setup(m => m.GetUser(It.IsAny<string>()))
+                .Returns<string>(valueFunction: userId => userId.Equals("01")
+                    ? new User
+                    {
+                        UserId = "01",
+                    }
+                    : null);
+
+            ChatService target = new ChatService(
+                chatRepositoryMock.Object,
+                userRepositoryMock.Object);
+
+            PostMessageRequestDto postMessageRequest = new PostMessageRequestDto
+            {
+                Author = "02",
+                Chat = "01",
+                Text = "text"
+            };
+
+            // act
+
+            PostMessageResponse? response = target.PostMessage(postMessageRequest);
+
+            // assert
+
+            Assert.Null(response);
+            Assert.True(target.HasValidationProblems);
+            Assert.Single(target.ValidationProblems);
+            Assert.Contains(
+                expectedSubstring: "user not found",
+                actualString: target.ValidationProblems.Single(),
+                comparisonType: StringComparison.OrdinalIgnoreCase
+                );
+
+            chatRepositoryMock.Verify(
+                expression: m => m.AddMessage(It.IsAny<Message>()),
+                times: Times.Never
+                );
+        }
+
+        [Fact]
+        public void Cannot_PostMessage_When_Chat_Not_Exist()
+        {
+            // arrange
+
+            Mock<IChatRepository> chatRepositoryMock = new Mock<IChatRepository>();
+            Mock<IUserRepository> userRepositoryMock = new Mock<IUserRepository>();
+
+            userRepositoryMock
+                .Setup(m => m.GetUser(It.IsAny<string>()))
+                .Returns<string>(valueFunction: userId => userId.Equals("01")
+                    ? new User
+                    {
+                        UserId = "01",
+                    }
+                    : null);
+
+            chatRepositoryMock
+                .Setup(m => m.GetChatWithUsers(It.IsAny<string>()))
+                .Returns<string>(valueFunction: chatId => chatId.Equals("01")
+                    ? new Chat
+                    {
+                        ChatId = "01"
+                    }
+                    : null);
+
+            ChatService target = new ChatService(
+                chatRepositoryMock.Object,
+                userRepositoryMock.Object);
+
+            PostMessageRequestDto postMessageRequest = new PostMessageRequestDto
+            {
+                Author = "01",
+                Chat = "02",
+                Text = "text"
+            };
+
+            // act
+
+            PostMessageResponse? response = target.PostMessage(postMessageRequest);
+
+            // assert
+
+            Assert.Null(response);
+            Assert.True(target.HasValidationProblems);
+            Assert.Single(target.ValidationProblems);
+            Assert.Contains(
+                expectedSubstring: "chat not found",
+                actualString: target.ValidationProblems.Single(),
+                comparisonType: StringComparison.OrdinalIgnoreCase
+                );
+
+            chatRepositoryMock.Verify(
+                expression: m => m.AddMessage(It.IsAny<Message>()),
+                times: Times.Never
+                );
+        }
     }
 }
