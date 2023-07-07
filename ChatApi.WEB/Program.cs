@@ -19,9 +19,10 @@ namespace ChatApi.WEB
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            string connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
             builder.Services.AddDbContext<AppDataContext>(o =>
             {
-                o.UseInMemoryDatabase(databaseName: "chat-db");
+                o.UseSqlite(connectionString);
             });
             builder.Services.AddTransient<IUserRepository, UserRepository>();
             builder.Services.AddTransient<IChatRepository, ChatRepository>();
