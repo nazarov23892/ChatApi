@@ -62,5 +62,19 @@ namespace ChatApi.DAL.Repositories.Concrete
                 })
                 .SingleOrDefault(c => c.ChatId == chatId);
         }
+
+        public Chat? GetChatWithUsers(string chatId)
+        {
+            return _efDbContext.Chats
+                .Include(c => c.Users)
+                .SingleOrDefault(c => chatId.Equals(c.ChatId, StringComparison.OrdinalIgnoreCase));
+        }
+
+        public void AddMessage(Message message)
+        {
+            _efDbContext.Set<Message>()
+                .Add(message);
+            _efDbContext.SaveChanges();
+        }
     }
 }

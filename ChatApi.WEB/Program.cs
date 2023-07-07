@@ -110,6 +110,24 @@ namespace ChatApi.WEB
                     }
                     return Results.Ok(value: chatMessagesResponse);
                 });
+
+            app.MapPost(
+                pattern: "/api/messages/add",
+                handler: ([FromBody] PostMessageRequestDto? postMessageRequestDto, IChatService chatService) =>
+                {
+                    if (postMessageRequestDto == null)
+                    {
+                        return Results.BadRequest(error: new ErrorResponseDto("empty or invalid request param value"));
+                    }
+                    PostMessageResponse? response = chatService.PostMessage(postMessageRequestDto);
+                    if (chatService.HasValidationProblems)
+                    {
+                        var errorResonseDto = new ErrorResponseDto(chatService.ValidationProblems.FirstOrDefault());
+                        return Results.BadRequest(errorResonseDto);
+                    }
+                    return Results.Ok(value: response);
+                });
+
             app.Run();
         }
     }

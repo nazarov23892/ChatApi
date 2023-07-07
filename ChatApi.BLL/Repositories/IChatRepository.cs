@@ -13,5 +13,7 @@ namespace ChatApi.BLL.Repositories
         Chat? FindByName(string name);
         User? GetUserWithChats(string userId);
         Chat? GetChatWithMessagesOrderedByCreatedAt(string chatId);
+        Chat? GetChatWithUsers(string chatId);
+        void AddMessage(Message message);
     }
 }

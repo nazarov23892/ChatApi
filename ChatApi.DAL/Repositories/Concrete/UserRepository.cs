@@ -41,5 +41,11 @@ namespace ChatApi.DAL.Repositories.Concrete
                 ?.ToArray()
                 ?? Enumerable.Empty<User>();
         }
+
+        public User? GetUser(string userId)
+        {
+            return _efDbContext.Users
+                .SingleOrDefault(u => userId.Equals(u.UserId, StringComparison.OrdinalIgnoreCase));
+        }
     }
 }

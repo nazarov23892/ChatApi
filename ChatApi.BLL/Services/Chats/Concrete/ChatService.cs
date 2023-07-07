@@ -90,7 +90,7 @@ namespace ChatApi.BLL.Services.Chats.Concrete
             if (chatWithMessages == null)
             {
                 AddValidationError(
-                    errorMessage: $"chat not found: chatId='{chatMessagesRequestDto.Chat}'", 
+                    errorMessage: $"chat not found: chatId='{chatMessagesRequestDto.Chat}'",
                     memberName: "-");
                 return null;
             }
@@ -122,6 +122,51 @@ namespace ChatApi.BLL.Services.Chats.Concrete
                     Name = c.Name,
                     CreatedAt = c.CreatedAt.ToString(format: "yyyy-MM-dd HH:mm:ss")
                 })
+            };
+        }
+
+        public PostMessageResponse? PostMessage(PostMessageRequestDto postMessageRequest)
+        {
+            if (!ValidateObject(postMessageRequest))
+            {
+                return null;
+            }
+            User? user = _userRepository.GetUser(userId: postMessageRequest.Author);
+            if (user == null)
+            {
+                AddValidationError(
+                    errorMessage: $"user not found: Id='{postMessageRequest.Author}'",
+                    memberName: "-");
+                return null;
+            }
+            Chat? chat = _chatRepository.GetChatWithUsers(chatId: postMessageRequest.Chat);
+            if (chat == null)
+            {
+                AddValidationError(
+                    errorMessage: $"chat not found: Id='{postMessageRequest.Chat}'",
+                    memberName: "-");
+                return null;
+            }
+            if (!chat.Users
+                .Any(u => postMessageRequest.Author.Equals(u.UserId, StringComparison.OrdinalIgnoreCase)))
+            {
+                AddValidationError(
+                    errorMessage: $"chat does not have this user: Id='{postMessageRequest.Author}'",
+                    memberName: "-");
+                return null;
+            }
+            var message = new Message
+            {
+                MessageId = Guid.NewGuid().ToString(),
+                Text = postMessageRequest.Text,
+                ChatId = chat.ChatId,
+                AuthorId = postMessageRequest.Author,
+                CreatedAt = DateTime.Now
+            };
+            _chatRepository.AddMessage(message);
+            return new PostMessageResponse
+            {
+                Id = message.MessageId
             };
         }
     }
