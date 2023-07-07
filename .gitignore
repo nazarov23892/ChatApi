@@ -361,3 +361,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/ChatApi.WEB/chat_api.db
+/ChatApi.WEB/chat_api.db-shm
+/ChatApi.WEB/chat_api.db-wal
