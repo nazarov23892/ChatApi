@@ -303,5 +303,65 @@ namespace ChatApi.Tests
                 times: Times.Never
                 );
         }
+
+        [Fact]
+        public void Can_PostMessage()
+        {
+            // arrange
+
+            Mock<IChatRepository> chatRepositoryMock = new Mock<IChatRepository>();
+            Mock<IUserRepository> userRepositoryMock = new Mock<IUserRepository>();
+
+            userRepositoryMock
+                .Setup(m => m.GetUser(It.IsAny<string>()))
+                .Returns<string>(valueFunction: userId => userId.Equals("001")
+                    ? new User
+                    {
+                        UserId = "001",
+                    }
+                    : null);
+
+            chatRepositoryMock
+                .Setup(m => m.GetChatWithUsers(It.IsAny<string>()))
+                .Returns<string>(valueFunction: chatId => chatId.Equals("01")
+                    ? new Chat
+                    {
+                        ChatId = "01",
+                        Users = new List<User>
+                        {
+                            new User { UserId = "001" },
+                            new User { UserId = "002" }
+                        }
+                    }
+                    : null);
+
+            ChatService target = new ChatService(
+                chatRepositoryMock.Object,
+                userRepositoryMock.Object);
+
+            PostMessageRequestDto postMessageRequest = new PostMessageRequestDto
+            {
+                Author = "001",
+                Chat = "01",
+                Text = "text"
+            };
+
+            // act
+
+            PostMessageResponse? response = target.PostMessage(postMessageRequest);
+
+            // assert
+
+            Assert.NotNull(response);
+            Assert.False(target.HasValidationProblems);
+            Assert.Empty(target.ValidationProblems);
+
+            chatRepositoryMock.Verify(
+                expression: m => m.AddMessage(It.Is<Message>(m => m.AuthorId.Equals("001") 
+                    && m.ChatId.Equals("01")
+                    && m.Text.Equals("text"))),
+                times: Times.Once
+                );
+        }
     }
 }
